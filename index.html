@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sistem Monitoring IoT Pengeringan Belimbing Wuluh</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .login-header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      .login-header img {
+        max-width: 120px;
+        margin-bottom: 15px;
+      }
+      .form-floating {
+        margin-bottom: 20px;
+      }
+      .btn-login {
+        background: linear-gradient(to right, #43cea2, #185a9d);
+        border: none;
+        padding: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        border-radius: 5px;
+      }
+      .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      .login-footer {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #6c757d;
+      }
+      .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+      }
+      .card-title {
+        color: #185a9d;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .iot-detail-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .iot-detail-item i {
+        color: #43cea2;
+        margin-right: 10px;
+        margin-top: 4px;
+      }
+      @media (max-width: 576px) {
+        .login-container {
+          margin: 0 15px;
+        }
+      }
+      .animated {
+        animation: fadeIn 1s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      #loginError {
+        display: none;
+        color: #dc3545;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        border-width: 0.15em;
+      }
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+      }
+      .toast {
+        min-width: 300px;
+      }
+      .toast-success {
+        background-color: #d4edda;
+        color: #155724;
+        border-color: #c3e6cb;
+      }
+      .toast-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border-color: #f5c6cb;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="container h-100 d-flex align-items-center justify-content-center"
+    >
+      <div class="card shadow login-container animated">
+        <div class="card-body p-4">
+          <div class="text-center login-header">
+            <img src="logo.png" alt="Logo" class="img-fluid" />
+            <h2 class="text-primary fw-bold">Smart Drying</h2>
+            <p class="text-muted">
+              Sistem Monitoring IoT Pengeringan Belimbing Wuluh
+            </p>
+          </div>
+
+          <div id="loginError" class="alert alert-danger">
+            Username atau password salah!
+          </div>
+
+          <form id="loginForm" class="mt-4">
+            <div class="input-group mb-3">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                placeholder="Username"
+                required
+              />
+            </div>
+
+            <div class="input-group mb-4">
+              <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Ingat Saya</label>
+            </div>
+
+            <div class="d-grid">
+              <button
+                type="submit"
+                class="btn btn-primary btn-login"
+                id="loginButton"
+              >
+                <i class="fas fa-sign-in-alt me-2"></i>Masuk
+              </button>
+            </div>
+          </form>
+
+          <div class="login-footer">
+            <p class="text-center text-muted mt-3 small">
+              &copy; 2025 Smart Drying System. Seluruh hak cipta oleh RafiNazmi
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container">
+      <div id="successToast" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto"><i class="fas fa-check-circle me-2"></i>Berhasil</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Login berhasil! Mengalihkan ke dashboard...
+        </div>
+      </div>
+      
+      <div id="errorToast" class="toast toast-error" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto"><i class="fas fa-exclamation-circle me-2"></i>Gagal</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="errorToastMessage">
+          Username atau password salah!
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDKmLXcBbT7tp4sQVmxEXtpB7Q-3tNfgQg",
+        databaseURL: "https://iot-wuluh-default-rtdb.firebaseio.com/",
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      
+      const successToast = new bootstrap.Toast(document.getElementById('successToast'), {delay: 3000});
+      const errorToast = new bootstrap.Toast(document.getElementById('errorToast'), {delay: 3000});
+
+      document.getElementById("loginForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const loginButton = document.getElementById("loginButton");
+        const loginError = document.getElementById("loginError");
+        const errorToastMessage = document.getElementById("errorToastMessage");
+
+        loginError.style.display = "none";
+
+        if (username.trim() === "" || password.trim() === "") {
+          loginError.textContent = "Mohon isi username dan password!";
+          loginError.style.display = "block";
+          errorToastMessage.textContent = "Mohon isi username dan password!";
+          errorToast.show();
+          return;
+        }
+
+        loginButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Masuk...';
+        loginButton.disabled = true;
+
+        database.ref("users").once("value")
+          .then((snapshot) => {
+            const users = snapshot.val();
+            let validUser = false;
+            let matchedUsername = "";
+
+            if (users) {
+              for (const userId in users) {
+                const user = users[userId];
+                if (user.username === username && user.password === password) {
+                  validUser = true;
+                  matchedUsername = user.username;
+                  break;
+                }
+              }
+            }
+
+            if (validUser) {
+              sessionStorage.setItem("isLoggedIn", "true");
+              sessionStorage.setItem("username", matchedUsername);
+
+              if (document.getElementById("rememberMe").checked) {
+                localStorage.setItem("rememberedUser", matchedUsername);
+              }
+              
+              successToast.show();
+              
+              setTimeout(function() {
+                window.location.href = "dashboard.html";
+              }, 1500);
+            } else {
+              loginError.textContent = "Username atau password salah!";
+              loginError.style.display = "block";
+              errorToastMessage.textContent = "Username atau password salah!";
+              errorToast.show();
+              loginButton.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Masuk';
+              loginButton.disabled = false;
+            }
+          })
+          .catch((error) => {
+            loginError.textContent = "Terjadi kesalahan! Silakan coba lagi.";
+            loginError.style.display = "block";
+            errorToastMessage.textContent = "Terjadi kesalahan! Silakan coba lagi.";
+            errorToast.show();
+            loginButton.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Masuk';
+            loginButton.disabled = false;
+            console.error("Login Error:", error);
+          });
+      });
+
+      window.addEventListener("load", function () {
+        const rememberedUser = localStorage.getItem("rememberedUser");
+        if (rememberedUser) {
+          document.getElementById("username").value = rememberedUser;
+          document.getElementById("rememberMe").checked = true;
+        }
+      });
+    </script>
+  </body>
+</html>

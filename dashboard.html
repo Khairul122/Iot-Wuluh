@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Monitoring Belimbing Wuluh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8fef5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            background-color: #2e7d32;
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .sidebar .nav-link {
+            color: #e8f5e9;
+            font-weight: 500;
+            border-radius: 5px;
+            margin: 5px 10px;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #43a047;
+            color: #fff;
+        }
+        .sidebar .nav-link.active {
+            background-color: #4caf50;
+            color: white;
+        }
+        .sidebar .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        .card {
+            border-radius: 10px;
+            border: none;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-title {
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        .header-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .status-on {
+            background-color: #4caf50;
+        }
+        .status-off {
+            background-color: #f44336;
+        }
+        .set-point-card {
+            background-color: #e8f5e9;
+        }
+        .history-card {
+            height: 300px;
+            overflow-y: auto;
+        }
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar d-flex flex-column p-3">
+        <div class="logo"><i class="fas fa-seedling me-2"></i> Belimbing Wuluh IoT</div>
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link active"><i class="fas fa-gauge me-2"></i>Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="riwayat.html" class="nav-link"><i class="fas fa-chart-line me-2"></i>Riwayat</a>
+            </li>
+            <li class="nav-item mt-auto">
+                <a href="index.html" class="nav-link text-light"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="fas fa-leaf me-2 text-success"></i>Monitoring Tanaman Belimbing Wuluh</h2>
+                <p class="text-muted">Pantau dan kendalikan pertumbuhan tanaman Belimbing Wuluh secara real-time.</p>
+            </div>
+            <div class="text-end">
+                <p id="current-date" class="mb-0 fw-bold">30 April 2025</p>
+                <p id="current-time" class="mb-0">12:00:00</p>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-temperature-high me-2"></i>Suhu</h5>
+                        <p class="card-text display-5 fw-bold text-success" id="suhu">25.7 °C</p>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-tint me-2"></i>Kelembapan</h5>
+                        <p class="card-text display-5 fw-bold text-primary" id="kelembapan">65.3 %</p>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-weight-scale me-2"></i>Berat</h5>
+                        <p class="card-text display-5 fw-bold text-warning" id="berat">1520.8 g</p>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-sliders me-2"></i>Kontrol Pemanas</h5>
+                        <div class="d-flex align-items-center mt-3">
+                            <div>
+                                <h6><span class="status-indicator status-on"></span> Status Pemanas</h6>
+                                <p class="mb-0 fw-bold" id="heater-status">AKTIF</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="set-point-card p-3 rounded">
+                                    <h6>Set Point Suhu:</h6>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="set-point-temp" value="26.5">
+                                        <span class="input-group-text">°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-success w-100 mt-md-0 mt-3" id="update-setpoint">
+                                    <i class="fas fa-save me-2"></i>Perbarui
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Status Sistem</h5>
+                        <div class="d-flex align-items-center mt-3">
+                            <div class="w-100">
+                                <div class="mb-3">
+                                    <h6>Status Koneksi</h6>
+                                    <p class="mb-0"><span class="badge bg-success" id="connection-status">Terhubung</span></p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6>Pembaruan Terakhir</h6>
+                                    <p class="mb-0" id="last-update">-</p>
+                                </div>
+                                <div>
+                                    <a href="riwayat.html" class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-history me-2"></i>Lihat Riwayat
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKmLXcBbT7tp4sQVmxEXtpB7Q-3tNfgQg",
+            databaseURL: "https://iot-wuluh-default-rtdb.firebaseio.com/",
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Dapatkan referensi ke database
+        const database = firebase.database();
+        
+        // Referensi ke node utama
+        const monitoringRef = database.ref('monitoring');
+        const relay_heaterRef = database.ref('relay_heater');
+        const riwayatRef = database.ref('riwayat');
+        const setpointRef = database.ref('set_point_temperature');
+        
+        // Variabel untuk menyimpan data
+        let monitoringData = {};
+        let relay_heater = {};
+        let riwayat = {};
+        let set_point_temperature = 0;
+        
+        // Fungsi untuk memformat timestamp menjadi jam
+        function formatTime(timestamp) {
+            if (!timestamp) return "-";
+            const date = new Date(timestamp);
+            return date.getHours().toString().padStart(2, '0') + ":" + 
+                   date.getMinutes().toString().padStart(2, '0');
+        }
+        
+        // Fungsi untuk memformat timestamp lengkap
+        function formatDateTime(timestamp) {
+            if (!timestamp) return "-";
+            const date = new Date(timestamp);
+            return date.toLocaleString('id-ID');
+        }
+        
+        // Riwayat dikelola di halaman terpisah, tidak perlu fungsi updateHistoryTable
+        
+        // Fungsi untuk memperbarui tampilan data monitoring
+        function updateMonitoringDisplay() {
+            if (monitoringData) {
+                // Update nilai monitoring
+                if (monitoringData.suhu !== undefined) {
+                    document.getElementById('suhu').textContent = `${monitoringData.suhu.toFixed(1)} °C`;
+                    
+                    // Update progress bar suhu (asumsi range 20-30°C)
+                    const suhuProgress = ((monitoringData.suhu - 20) / (30 - 20)) * 100;
+                    document.querySelector('.card:nth-child(1) .progress-bar').style.width = `${Math.min(Math.max(suhuProgress, 0), 100)}%`;
+                }
+                
+                if (monitoringData.kelembapan !== undefined) {
+                    document.getElementById('kelembapan').textContent = `${monitoringData.kelembapan.toFixed(1)} %`;
+                    
+                    // Update progress bar kelembapan (asumsi range 50-80%)
+                    const kelembapanProgress = ((monitoringData.kelembapan - 50) / (80 - 50)) * 100;
+                    document.querySelector('.card:nth-child(2) .progress-bar').style.width = `${Math.min(Math.max(kelembapanProgress, 0), 100)}%`;
+                }
+                
+                if (monitoringData.berat !== undefined) {
+                    document.getElementById('berat').textContent = `${monitoringData.berat.toFixed(1)} g`;
+                    
+                    // Update progress bar berat (asumsi range 1000-2000g)
+                    const beratProgress = ((monitoringData.berat - 1000) / (2000 - 1000)) * 100;
+                    document.querySelector('.card:nth-child(3) .progress-bar').style.width = `${Math.min(Math.max(beratProgress, 0), 100)}%`;
+                }
+            }
+        }
+        
+        // Fungsi untuk memperbarui status relay heater
+        function updateRelayHeaterStatus() {
+            if (relay_heater) {
+                const statusElement = document.getElementById('heater-status');
+                const statusIndicator = document.querySelector('.status-indicator');
+                const switchElement = document.getElementById('heater-switch');
+                
+                if (relay_heater.status === "ON") {
+                    statusElement.textContent = "AKTIF";
+                    statusIndicator.classList.remove('status-off');
+                    statusIndicator.classList.add('status-on');
+                } else {
+                    statusElement.textContent = "NONAKTIF";
+                    statusIndicator.classList.remove('status-on');
+                    statusIndicator.classList.add('status-off');
+                }
+                
+                if (relay_heater.auto_mode !== undefined) {
+                    switchElement.checked = relay_heater.auto_mode;
+                }
+            }
+        }
+        
+        // Fungsi untuk memperbarui set point temperature
+        function updateSetPointTemperature() {
+            if (set_point_temperature) {
+                document.getElementById('set-point-temp').value = set_point_temperature;
+            }
+        }
+        
+        // Untuk menyimpan waktu pembaruan terakhir
+        let lastUpdateTime = null;
+
+        // Listener untuk data monitoring
+        monitoringRef.on('value', (snapshot) => {
+            monitoringData = snapshot.val();
+            updateMonitoringDisplay();
+            updateLastUpdate();
+        });
+        
+        // Listener untuk data relay heater
+        relay_heaterRef.on('value', (snapshot) => {
+            relay_heater = snapshot.val();
+            updateRelayHeaterStatus();
+            updateLastUpdate();
+        });
+        
+        // Listener untuk data set point temperature
+        setpointRef.on('value', (snapshot) => {
+            set_point_temperature = snapshot.val();
+            updateSetPointTemperature();
+            updateLastUpdate();
+        });
+
+        // Fungsi untuk memperbarui waktu update terakhir
+        function updateLastUpdate() {
+            lastUpdateTime = new Date();
+            document.getElementById('last-update').textContent = lastUpdateTime.toLocaleString('id-ID');
+        }
+        
+        // Fungsi untuk memeriksa status koneksi
+        function checkConnectionStatus() {
+            const connectedRef = database.ref(".info/connected");
+            connectedRef.on("value", (snap) => {
+                if (snap.val() === true) {
+                    document.getElementById('connection-status').className = "badge bg-success";
+                    document.getElementById('connection-status').textContent = "Terhubung";
+                } else {
+                    document.getElementById('connection-status').className = "badge bg-danger";
+                    document.getElementById('connection-status').textContent = "Terputus";
+                }
+            });
+        }
+        
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString('id-ID', dateOptions);
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
+        }
+        
+        // Memulai fungsi update waktu dan status koneksi
+        updateDateTime();
+        checkConnectionStatus();
+        setInterval(updateDateTime, 1000);
+        
+        // Event listener untuk tombol update setpoint
+        document.getElementById('update-setpoint').addEventListener('click', function() {
+            const newSetPoint = parseFloat(document.getElementById('set-point-temp').value);
+            if (!isNaN(newSetPoint)) {
+                // Update nilai set point di Firebase
+                setpointRef.set(newSetPoint)
+                    .then(() => {
+                        alert('Set point suhu berhasil diperbarui!');
+                    })
+                    .catch((error) => {
+                        alert('Gagal memperbarui set point: ' + error.message);
+                    });
+            } else {
+                alert('Masukkan nilai suhu yang valid!');
+            }
+        });
+    </script>
+</body>
+</html>
