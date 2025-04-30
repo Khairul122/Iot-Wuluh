@@ -87,6 +87,19 @@
             height: 300px;
             margin-top: 20px;
         }
+        .control-btn {
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .control-btn-on {
+            background-color: #4caf50;
+            border-color: #4caf50;
+        }
+        .control-btn-off {
+            background-color: #f44336;
+            border-color: #f44336;
+        }
     </style>
 </head>
 <body>
@@ -157,10 +170,10 @@
             <div class="col-md-6 mb-3">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-sliders me-2"></i>Kontrol Pemanas</h5>
+                        <h5 class="card-title"><i class="fas fa-fire me-2"></i>Kontrol Pemanas</h5>
                         <div class="d-flex align-items-center mt-3">
                             <div>
-                                <h6><span class="status-indicator status-on"></span> Status Pemanas</h6>
+                                <h6><span class="status-indicator status-on" id="heater-indicator"></span> Status Pemanas</h6>
                                 <p class="mb-0 fw-bold" id="heater-status">AKTIF</p>
                             </div>
                         </div>
@@ -179,6 +192,14 @@
                                 <button class="btn btn-success w-100 mt-md-0 mt-3" id="update-setpoint">
                                     <i class="fas fa-save me-2"></i>Perbarui
                                 </button>
+                                <div class="btn-group mt-3 w-100">
+                                    <button class="btn btn-success control-btn" id="heater-on-btn">
+                                        <i class="fas fa-power-off me-2"></i>ON
+                                    </button>
+                                    <button class="btn btn-danger control-btn" id="heater-off-btn">
+                                        <i class="fas fa-power-off me-2"></i>OFF
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -187,21 +208,25 @@
             <div class="col-md-6 mb-3">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Status Sistem</h5>
+                        <h5 class="card-title"><i class="fas fa-fan me-2"></i>Kontrol Kipas</h5>
                         <div class="d-flex align-items-center mt-3">
-                            <div class="w-100">
-                                <div class="mb-3">
-                                    <h6>Status Koneksi</h6>
-                                    <p class="mb-0"><span class="badge bg-success" id="connection-status">Terhubung</span></p>
-                                </div>
-                                <div class="mb-3">
-                                    <h6>Pembaruan Terakhir</h6>
-                                    <p class="mb-0" id="last-update">-</p>
-                                </div>
-                                <div>
-                                    <a href="riwayat.html" class="btn btn-outline-primary w-100">
-                                        <i class="fas fa-history me-2"></i>Lihat Riwayat
-                                    </a>
+                            <div>
+                                <h6><span class="status-indicator status-off" id="fan-indicator"></span> Status Kipas</h6>
+                                <p class="mb-0 fw-bold" id="fan-status">NONAKTIF</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-success control-btn control-btn-on" id="fan-on-btn">
+                                            <i class="fas fa-power-off me-2"></i>NYALAKAN KIPAS
+                                        </button>
+                                        <button class="btn btn-danger control-btn control-btn-off" id="fan-off-btn">
+                                            <i class="fas fa-power-off me-2"></i>MATIKAN KIPAS
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -209,40 +234,88 @@
                 </div>
             </div>
         </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Status Sistem</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h6>Status Koneksi</h6>
+                            <p class="mb-0"><span class="badge bg-success" id="connection-status">Terhubung</span></p>
+                        </div>
+                        <div class="mb-3">
+                            <h6>Pembaruan Terakhir</h6>
+                            <p class="mb-0" id="last-update">-</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="w-100 text-md-end">
+                            <a href="riwayat.html" class="btn btn-outline-primary" style="min-width: 200px;">
+                                <i class="fas fa-history me-2"></i>Lihat Riwayat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toast-title">Notifikasi</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                Hello, world! This is a toast message.
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Firebase App (the core Firebase SDK) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firebase Database -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <script>
-        // Konfigurasi Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDKmLXcBbT7tp4sQVmxEXtpB7Q-3tNfgQg",
             databaseURL: "https://iot-wuluh-default-rtdb.firebaseio.com/",
         };
 
-        // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         
-        // Dapatkan referensi ke database
         const database = firebase.database();
         
-        // Referensi ke node utama
         const monitoringRef = database.ref('monitoring');
         const relay_heaterRef = database.ref('relay_heater');
-        const riwayatRef = database.ref('riwayat');
+        const relay_fanRef = database.ref('relay_fan');
         const setpointRef = database.ref('set_point_temperature');
         
-        // Variabel untuk menyimpan data
         let monitoringData = {};
         let relay_heater = {};
-        let riwayat = {};
+        let relay_fan = {};
         let set_point_temperature = 0;
         
-        // Fungsi untuk memformat timestamp menjadi jam
+        let lastUpdateTime = null;
+        
+        const toastElement = document.getElementById('notificationToast');
+        const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+        
+        function showToast(title, message, isSuccess = true) {
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-message').textContent = message;
+            
+            toastElement.classList.remove('bg-success', 'bg-danger', 'text-white');
+            if (isSuccess) {
+                toastElement.classList.add('bg-success', 'text-white');
+            } else {
+                toastElement.classList.add('bg-danger', 'text-white');
+            }
+            
+            toast.show();
+        }
+        
         function formatTime(timestamp) {
             if (!timestamp) return "-";
             const date = new Date(timestamp);
@@ -250,106 +323,82 @@
                    date.getMinutes().toString().padStart(2, '0');
         }
         
-        // Fungsi untuk memformat timestamp lengkap
         function formatDateTime(timestamp) {
             if (!timestamp) return "-";
             const date = new Date(timestamp);
             return date.toLocaleString('id-ID');
         }
         
-        // Riwayat dikelola di halaman terpisah, tidak perlu fungsi updateHistoryTable
-        
-        // Fungsi untuk memperbarui tampilan data monitoring
         function updateMonitoringDisplay() {
             if (monitoringData) {
-                // Update nilai monitoring
                 if (monitoringData.suhu !== undefined) {
                     document.getElementById('suhu').textContent = `${monitoringData.suhu.toFixed(1)} °C`;
                     
-                    // Update progress bar suhu (asumsi range 20-30°C)
                     const suhuProgress = ((monitoringData.suhu - 20) / (30 - 20)) * 100;
-                    document.querySelector('.card:nth-child(1) .progress-bar').style.width = `${Math.min(Math.max(suhuProgress, 0), 100)}%`;
+                    document.querySelector('.col-md-4:nth-child(1) .progress-bar').style.width = `${Math.min(Math.max(suhuProgress, 0), 100)}%`;
                 }
                 
                 if (monitoringData.kelembapan !== undefined) {
                     document.getElementById('kelembapan').textContent = `${monitoringData.kelembapan.toFixed(1)} %`;
                     
-                    // Update progress bar kelembapan (asumsi range 50-80%)
                     const kelembapanProgress = ((monitoringData.kelembapan - 50) / (80 - 50)) * 100;
-                    document.querySelector('.card:nth-child(2) .progress-bar').style.width = `${Math.min(Math.max(kelembapanProgress, 0), 100)}%`;
+                    document.querySelector('.col-md-4:nth-child(2) .progress-bar').style.width = `${Math.min(Math.max(kelembapanProgress, 0), 100)}%`;
                 }
                 
                 if (monitoringData.berat !== undefined) {
                     document.getElementById('berat').textContent = `${monitoringData.berat.toFixed(1)} g`;
                     
-                    // Update progress bar berat (asumsi range 1000-2000g)
                     const beratProgress = ((monitoringData.berat - 1000) / (2000 - 1000)) * 100;
-                    document.querySelector('.card:nth-child(3) .progress-bar').style.width = `${Math.min(Math.max(beratProgress, 0), 100)}%`;
+                    document.querySelector('.col-md-4:nth-child(3) .progress-bar').style.width = `${Math.min(Math.max(beratProgress, 0), 100)}%`;
                 }
             }
         }
         
-        // Fungsi untuk memperbarui status relay heater
         function updateRelayHeaterStatus() {
             if (relay_heater) {
                 const statusElement = document.getElementById('heater-status');
-                const statusIndicator = document.querySelector('.status-indicator');
-                const switchElement = document.getElementById('heater-switch');
+                const indicatorElement = document.getElementById('heater-indicator');
                 
                 if (relay_heater.status === "ON") {
                     statusElement.textContent = "AKTIF";
-                    statusIndicator.classList.remove('status-off');
-                    statusIndicator.classList.add('status-on');
+                    indicatorElement.classList.remove('status-off');
+                    indicatorElement.classList.add('status-on');
                 } else {
                     statusElement.textContent = "NONAKTIF";
-                    statusIndicator.classList.remove('status-on');
-                    statusIndicator.classList.add('status-off');
-                }
-                
-                if (relay_heater.auto_mode !== undefined) {
-                    switchElement.checked = relay_heater.auto_mode;
+                    indicatorElement.classList.remove('status-on');
+                    indicatorElement.classList.add('status-off');
                 }
             }
         }
         
-        // Fungsi untuk memperbarui set point temperature
+        function updateRelayFanStatus() {
+            if (relay_fan) {
+                const statusElement = document.getElementById('fan-status');
+                const indicatorElement = document.getElementById('fan-indicator');
+                
+                if (relay_fan.status === "ON") {
+                    statusElement.textContent = "AKTIF";
+                    indicatorElement.classList.remove('status-off');
+                    indicatorElement.classList.add('status-on');
+                } else {
+                    statusElement.textContent = "NONAKTIF";
+                    indicatorElement.classList.remove('status-on');
+                    indicatorElement.classList.add('status-off');
+                }
+            }
+        }
+        
         function updateSetPointTemperature() {
             if (set_point_temperature) {
                 document.getElementById('set-point-temp').value = set_point_temperature;
             }
         }
         
-        // Untuk menyimpan waktu pembaruan terakhir
-        let lastUpdateTime = null;
-
-        // Listener untuk data monitoring
-        monitoringRef.on('value', (snapshot) => {
-            monitoringData = snapshot.val();
-            updateMonitoringDisplay();
-            updateLastUpdate();
-        });
-        
-        // Listener untuk data relay heater
-        relay_heaterRef.on('value', (snapshot) => {
-            relay_heater = snapshot.val();
-            updateRelayHeaterStatus();
-            updateLastUpdate();
-        });
-        
-        // Listener untuk data set point temperature
-        setpointRef.on('value', (snapshot) => {
-            set_point_temperature = snapshot.val();
-            updateSetPointTemperature();
-            updateLastUpdate();
-        });
-
-        // Fungsi untuk memperbarui waktu update terakhir
         function updateLastUpdate() {
             lastUpdateTime = new Date();
             document.getElementById('last-update').textContent = lastUpdateTime.toLocaleString('id-ID');
         }
         
-        // Fungsi untuk memeriksa status koneksi
         function checkConnectionStatus() {
             const connectedRef = database.ref(".info/connected");
             connectedRef.on("value", (snap) => {
@@ -363,7 +412,6 @@
             });
         }
         
-        // Update current date and time
         function updateDateTime() {
             const now = new Date();
             const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -371,26 +419,87 @@
             document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
         }
         
-        // Memulai fungsi update waktu dan status koneksi
+        monitoringRef.on('value', (snapshot) => {
+            monitoringData = snapshot.val();
+            updateMonitoringDisplay();
+            updateLastUpdate();
+        });
+        
+        relay_heaterRef.on('value', (snapshot) => {
+            relay_heater = snapshot.val();
+            updateRelayHeaterStatus();
+            updateLastUpdate();
+        });
+        
+        relay_fanRef.on('value', (snapshot) => {
+            relay_fan = snapshot.val() || { status: "OFF" };
+            updateRelayFanStatus();
+            updateLastUpdate();
+        });
+        
+        setpointRef.on('value', (snapshot) => {
+            set_point_temperature = snapshot.val();
+            updateSetPointTemperature();
+            updateLastUpdate();
+        });
+        
         updateDateTime();
         checkConnectionStatus();
         setInterval(updateDateTime, 1000);
         
-        // Event listener untuk tombol update setpoint
         document.getElementById('update-setpoint').addEventListener('click', function() {
             const newSetPoint = parseFloat(document.getElementById('set-point-temp').value);
             if (!isNaN(newSetPoint)) {
-                // Update nilai set point di Firebase
                 setpointRef.set(newSetPoint)
                     .then(() => {
-                        alert('Set point suhu berhasil diperbarui!');
+                        showToast("Sukses", "Set point suhu berhasil diperbarui!", true);
                     })
                     .catch((error) => {
-                        alert('Gagal memperbarui set point: ' + error.message);
+                        showToast("Gagal", "Gagal memperbarui set point: " + error.message, false);
                     });
             } else {
-                alert('Masukkan nilai suhu yang valid!');
+                showToast("Peringatan", "Masukkan nilai suhu yang valid!", false);
             }
+        });
+        
+        document.getElementById('heater-on-btn').addEventListener('click', function() {
+            relay_heaterRef.update({ status: "ON" })
+                .then(() => {
+                    showToast("Sukses", "Pemanas berhasil dinyalakan!", true);
+                })
+                .catch((error) => {
+                    showToast("Gagal", "Gagal menyalakan pemanas: " + error.message, false);
+                });
+        });
+        
+        document.getElementById('heater-off-btn').addEventListener('click', function() {
+            relay_heaterRef.update({ status: "OFF" })
+                .then(() => {
+                    showToast("Sukses", "Pemanas berhasil dimatikan!", true);
+                })
+                .catch((error) => {
+                    showToast("Gagal", "Gagal mematikan pemanas: " + error.message, false);
+                });
+        });
+        
+        document.getElementById('fan-on-btn').addEventListener('click', function() {
+            relay_fanRef.update({ status: "ON" })
+                .then(() => {
+                    showToast("Sukses", "Kipas berhasil dinyalakan!", true);
+                })
+                .catch((error) => {
+                    showToast("Gagal", "Gagal menyalakan kipas: " + error.message, false);
+                });
+        });
+        
+        document.getElementById('fan-off-btn').addEventListener('click', function() {
+            relay_fanRef.update({ status: "OFF" })
+                .then(() => {
+                    showToast("Sukses", "Kipas berhasil dimatikan!", true);
+                })
+                .catch((error) => {
+                    showToast("Gagal", "Gagal mematikan kipas: " + error.message, false);
+                });
         });
     </script>
 </body>
