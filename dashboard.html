@@ -100,6 +100,9 @@
             background-color: #f44336;
             border-color: #f44336;
         }
+        .device-status-card {
+            border-left: 4px solid #4caf50;
+        }
     </style>
 </head>
 <body>
@@ -127,6 +130,21 @@
             <div class="text-end">
                 <p id="current-date" class="mb-0 fw-bold">30 April 2025</p>
                 <p id="current-time" class="mb-0">12:00:00</p>
+            </div>
+        </div>
+
+        <div class="alert device-status-card mb-4" id="device-status-alert">
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-microchip fa-2x me-3" id="device-status-icon"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <h5 class="alert-heading mb-1">Status Alat</h5>
+                    <p class="mb-0" id="device-status-text">Alat sedang terhubung ke jaringan</p>
+                </div>
+                <div class="ms-auto">
+                    <span class="badge bg-success fs-6 p-2" id="device-status-badge">TERHUBUNG</span>
+                </div>
             </div>
         </div>
 
@@ -291,11 +309,13 @@
         const relay_heaterRef = database.ref('relay_heater');
         const relay_fanRef = database.ref('relay_fan');
         const setpointRef = database.ref('set_point_temperature');
+        const alatRef = database.ref('alat');
         
         let monitoringData = {};
         let relay_heater = {};
         let relay_fan = {};
         let set_point_temperature = 0;
+        let alatStatus = {};
         
         let lastUpdateTime = null;
         
@@ -388,6 +408,29 @@
             }
         }
         
+        function updateDeviceStatus() {
+            if (alatStatus) {
+                const alertElement = document.getElementById('device-status-alert');
+                const badgeElement = document.getElementById('device-status-badge');
+                const textElement = document.getElementById('device-status-text');
+                const iconElement = document.getElementById('device-status-icon');
+                
+                if (alatStatus.status === "ON") {
+                    alertElement.className = "alert alert-success device-status-card mb-4";
+                    badgeElement.className = "badge bg-success fs-6 p-2";
+                    badgeElement.textContent = "TERHUBUNG";
+                    textElement.textContent = "Alat berhasil terhubung ke jaringan Wi-Fi";
+                    iconElement.className = "fas fa-microchip fa-2x me-3 text-success";
+                } else {
+                    alertElement.className = "alert alert-danger device-status-card mb-4";
+                    badgeElement.className = "badge bg-danger fs-6 p-2";
+                    badgeElement.textContent = "TERPUTUS";
+                    textElement.textContent = "Alat tidak terhubung ke jaringan Wi-Fi";
+                    iconElement.className = "fas fa-microchip fa-2x me-3 text-danger";
+                }
+            }
+        }
+        
         function updateSetPointTemperature() {
             if (set_point_temperature) {
                 document.getElementById('set-point-temp').value = set_point_temperature;
@@ -440,6 +483,12 @@
         setpointRef.on('value', (snapshot) => {
             set_point_temperature = snapshot.val();
             updateSetPointTemperature();
+            updateLastUpdate();
+        });
+
+        alatRef.on('value', (snapshot) => {
+            alatStatus = snapshot.val() || { status: "OFF" };
+            updateDeviceStatus();
             updateLastUpdate();
         });
         
