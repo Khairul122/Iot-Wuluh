@@ -1,555 +1,502 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Monitoring Belimbing Wuluh</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Sistem Monitoring IoT Belimbing Wuluh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        body {
-            background-color: #f8fef5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+      body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .dashboard-header {
+        background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+        color: white;
+        padding: 15px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      .wrapper {
+        display: flex;
+        flex: 1;
+      }
+      
+      .sidebar {
+        background-color: #343a40;
+        color: white;
+        min-width: 250px;
+        max-width: 250px;
+        min-height: calc(100vh - 70px);
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        z-index: 100;
+      }
+      
+      .sidebar-header {
+        padding: 20px;
+        background: #212529;
+      }
+      
+      .sidebar-menu {
+        padding: 0;
+        list-style: none;
+      }
+      
+      .sidebar-menu li {
+        margin: 0;
+        padding: 0;
+      }
+      
+      .sidebar-menu li a {
+        padding: 15px 20px;
+        display: block;
+        color: #adb5bd;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      
+      .sidebar-menu li a:hover,
+      .sidebar-menu li a.active {
+        color: #fff;
+        background: #2c3136;
+        border-left: 3px solid #43cea2;
+      }
+      
+      .sidebar-menu li a i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+      }
+      
+      .main-content {
+        flex: 1;
+        padding: 20px;
+        transition: all 0.3s;
+      }
+      
+      .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: none;
+        border-radius: 10px;
+        transition: transform 0.3s;
+        margin-bottom: 20px;
+      }
+      
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      
+      .value-card {
+        text-align: center;
+        padding: 20px;
+      }
+      
+      .value-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        color: #185a9d;
+      }
+      
+      .value-card .value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      
+      .value-card .label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .control-card {
+        padding: 20px;
+      }
+      
+      .toggle-btn {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+      
+      .toggle-btn input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+      }
+      
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+      }
+      
+      input:checked + .slider {
+        background-color: #43cea2;
+      }
+      
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+      
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      
+      .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        color: #43cea2;
+      }
+      
+      .status-display {
+        background-color: #212529;
+        color: #7FFFD4;
+        font-family: 'Courier New', Courier, monospace;
+        padding: 15px;
+        border-radius: 10px;
+        height: 220px;
+        overflow: auto;
+        font-size: 1.2rem;
+        font-weight: bold;
+        line-height: 1.6;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        white-space: pre-line;
+      }
+      
+      .set-point-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .set-point-form input {
+        max-width: 100px;
+      }
+      
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1050;
+      }
+      
+      .toast {
+        min-width: 300px;
+      }
+      
+      .status-on {
+        color: #00FF00;
+      }
+      
+      .status-off {
+        color: #FF4500;
+      }
+      
+      .section-content {
+        display: none;
+      }
+      
+      .section-content.active {
+        display: block;
+      }
+      
+      .toggle-sidebar {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      
+      @media (max-width: 768px) {
         .sidebar {
-            height: 100vh;
-            width: 250px;
-            background-color: #2e7d32;
-            color: #fff;
-            position: fixed;
-            top: 0;
-            left: 0;
+          margin-left: -250px;
         }
-        .sidebar .nav-link {
-            color: #e8f5e9;
-            font-weight: 500;
-            border-radius: 5px;
-            margin: 5px 10px;
+        
+        .sidebar.active {
+          margin-left: 0;
         }
-        .sidebar .nav-link:hover {
-            background-color: #43a047;
-            color: #fff;
-        }
-        .sidebar .nav-link.active {
-            background-color: #4caf50;
-            color: white;
-        }
-        .sidebar .logo {
-            font-size: 1.3rem;
-            font-weight: bold;
-            padding: 1.2rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        
         .main-content {
-            margin-left: 250px;
-            padding: 2rem;
+          width: 100%;
         }
-        .card {
-            border-radius: 10px;
-            border: none;
-            transition: transform 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card-title {
-            font-weight: 600;
-            color: #2e7d32;
-        }
-        .header-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .status-indicator {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .status-on {
-            background-color: #4caf50;
-        }
-        .status-off {
-            background-color: #f44336;
-        }
-        .set-point-card {
-            background-color: #e8f5e9;
-        }
-        .history-card {
-            height: 300px;
-            overflow-y: auto;
-        }
-        .chart-container {
-            height: 300px;
-            margin-top: 20px;
-        }
-        .control-btn {
-            width: 100%;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .control-btn-on {
-            background-color: #4caf50;
-            border-color: #4caf50;
-        }
-        .control-btn-off {
-            background-color: #f44336;
-            border-color: #f44336;
-        }
-        .device-status-card {
-            border-left: 4px solid #4caf50;
-        }
+      }
+      
+      .status-device {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      
+      .status-indicator {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      
+      .indicator-on {
+        background-color: #00FF00;
+        box-shadow: 0 0 5px #00FF00;
+      }
+      
+      .indicator-off {
+        background-color: #FF4500;
+        box-shadow: 0 0 5px #FF4500;
+      }
+      
+      footer {
+        background: #212529;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        margin-top: auto;
+      }
     </style>
-</head>
-<body>
-    <div class="sidebar d-flex flex-column p-3">
-        <div class="logo"><i class="fas fa-seedling me-2"></i> Belimbing Wuluh IoT</div>
-        <ul class="nav flex-column mt-3">
-            <li class="nav-item">
-                <a href="dashboard.html" class="nav-link active"><i class="fas fa-gauge me-2"></i>Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a href="riwayat.html" class="nav-link"><i class="fas fa-chart-line me-2"></i>Riwayat</a>
-            </li>
-            <li class="nav-item mt-auto">
-                <a href="index.html" class="nav-link text-light"><i class="fas fa-sign-out-alt me-2"></i>Keluar</a>
-            </li>
+  </head>
+  <body>
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    
+    <header class="dashboard-header">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-auto">
+            <button class="toggle-sidebar me-2" id="sidebarToggle">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+          <div class="col">
+            <h2 class="mb-0">
+              <i class="fas fa-leaf me-2"></i>
+              Sistem Monitoring IoT Belimbing Wuluh
+            </h2>
+          </div>
+          <div class="col-auto">
+            <p class="mb-0" id="current-time">
+              <i class="far fa-clock me-1"></i> Loading...
+            </p>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="wrapper">
+      <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h5 class="m-0">Menu Navigasi</h5>
+        </div>
+        
+        <ul class="sidebar-menu">
+          <li>
+            <a href="dashboard.html" class="active">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="riwayat.html">
+              <i class="fas fa-history"></i> Riwayat
+            </a>
+          </li>          
+          <li class="mt-4">
+            <a href="index.html" class="text-danger">
+              <i class="fas fa-sign-out-alt"></i> Keluar
+            </a>
+          </li>
         </ul>
+      </nav>
+      
+      <div class="main-content">
+        <div id="dashboard-section" class="section-content active">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card value-card">
+                <div class="icon">
+                  <i class="fas fa-temperature-high"></i>
+                </div>
+                <div class="value" id="suhu-value">--</div>
+                <div class="label">Suhu (°C)</div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="card value-card">
+                <div class="icon">
+                  <i class="fas fa-tint"></i>
+                </div>
+                <div class="value" id="kelembapan-value">--</div>
+                <div class="label">Kelembapan (%)</div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="card value-card">
+                <div class="icon">
+                  <i class="fas fa-weight"></i>
+                </div>
+                <div class="value" id="berat-value">--</div>
+                <div class="label">Berat (g)</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-dark text-white">
+                  <i class="fas fa-desktop me-2"></i>Status Display
+                </div>
+                <div class="card-body p-0">
+                  <div class="status-display p-3" id="status-display">
+                    Menghubungkan...
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-header bg-dark text-white">
+                  <i class="fas fa-sliders-h me-2"></i>Kontrol Perangkat
+                </div>
+                <div class="card-body control-card">
+                  <div class="status-device">
+                    <div>
+                      <span class="status-indicator" id="fan-indicator"></span>
+                      <strong>FAN:</strong>
+                    </div>
+                    <span id="fan-status-text">--</span>
+                  </div>
+                  
+                  <div class="status-device">
+                    <div>
+                      <span class="status-indicator" id="heater-indicator"></span>
+                      <strong>HEATER:</strong>
+                    </div>
+                    <span id="heater-status-text">--</span>
+                  </div>
+                  
+                  <hr>
+                  
+                  <div class="mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                      <label class="form-label mb-0"><i class="fas fa-fan me-2"></i>Kipas</label>
+                      <label class="toggle-btn">
+                        <input type="checkbox" id="fan-control">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                      <label class="form-label mb-0"><i class="fas fa-fire me-2"></i>Pemanas</label>
+                      <label class="toggle-btn">
+                        <input type="checkbox" id="heater-control">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label class="form-label"><i class="fas fa-thermometer-half me-2"></i>Set Point Suhu (°C)</label>
+                    <div class="set-point-form">
+                      <input type="number" class="form-control" id="set-point-input" min="20" max="80" step="0.5">
+                      <button class="btn btn-primary" id="set-point-btn">
+                        <i class="fas fa-check me-1"></i>Terapkan
+                      </button>
+                    </div>
+                    <p class="mt-2">Set Point Suhu saat ini: <span id="current-set-point">--</span> °C</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="main-content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2><i class="fas fa-leaf me-2 text-success"></i>Monitoring Tanaman Belimbing Wuluh</h2>
-                <p class="text-muted">Pantau dan kendalikan pertumbuhan tanaman Belimbing Wuluh secara real-time.</p>
-            </div>
-            <div class="text-end">
-                <p id="current-date" class="mb-0 fw-bold">30 April 2025</p>
-                <p id="current-time" class="mb-0">12:00:00</p>
-            </div>
+    
+    <footer>
+      <div class="container">
+        <p class="m-0">© 2025 Sistem Monitoring IoT Belimbing Wuluh</p>
+      </div>
+    </footer>
+    
+    <div class="toast-container">
+      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="notification-toast">
+        <div class="toast-header">
+          <strong class="me-auto" id="toast-title">Notifikasi</strong>
+          <small id="toast-time">just now</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
-
-        <div class="alert device-status-card mb-4" id="device-status-alert">
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-microchip fa-2x me-3" id="device-status-icon"></i>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                    <h5 class="alert-heading mb-1">Status Alat</h5>
-                    <p class="mb-0" id="device-status-text">Alat sedang terhubung ke jaringan</p>
-                </div>
-                <div class="ms-auto">
-                    <span class="badge bg-success fs-6 p-2" id="device-status-badge">TERHUBUNG</span>
-                </div>
-            </div>
+        <div class="toast-body" id="toast-message">
+          Hello, world! This is a toast message.
         </div>
-
-        <div class="row mt-4">
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-temperature-high me-2"></i>Suhu</h5>
-                        <p class="card-text display-5 fw-bold text-success" id="suhu">25.7 °C</p>
-                        <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-tint me-2"></i>Kelembapan</h5>
-                        <p class="card-text display-5 fw-bold text-primary" id="kelembapan">65.3 %</p>
-                        <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-weight-scale me-2"></i>Berat</h5>
-                        <p class="card-text display-5 fw-bold text-warning" id="berat">1520.8 g</p>
-                        <div class="progress mt-2" style="height: 8px;">
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-md-6 mb-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-fire me-2"></i>Kontrol Pemanas</h5>
-                        <div class="d-flex align-items-center mt-3">
-                            <div>
-                                <h6><span class="status-indicator status-on" id="heater-indicator"></span> Status Pemanas</h6>
-                                <p class="mb-0 fw-bold" id="heater-status">AKTIF</p>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="set-point-card p-3 rounded">
-                                    <h6>Set Point Suhu:</h6>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="set-point-temp" value="26.5">
-                                        <span class="input-group-text">°C</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <button class="btn btn-success w-100 mt-md-0 mt-3" id="update-setpoint">
-                                    <i class="fas fa-save me-2"></i>Perbarui
-                                </button>
-                                <div class="btn-group mt-3 w-100">
-                                    <button class="btn btn-success control-btn" id="heater-on-btn">
-                                        <i class="fas fa-power-off me-2"></i>ON
-                                    </button>
-                                    <button class="btn btn-danger control-btn" id="heater-off-btn">
-                                        <i class="fas fa-power-off me-2"></i>OFF
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-fan me-2"></i>Kontrol Kipas</h5>
-                        <div class="d-flex align-items-center mt-3">
-                            <div>
-                                <h6><span class="status-indicator status-off" id="fan-indicator"></span> Status Kipas</h6>
-                                <p class="mb-0 fw-bold" id="fan-status">NONAKTIF</p>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="mt-3">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-success control-btn control-btn-on" id="fan-on-btn">
-                                            <i class="fas fa-power-off me-2"></i>NYALAKAN KIPAS
-                                        </button>
-                                        <button class="btn btn-danger control-btn control-btn-off" id="fan-off-btn">
-                                            <i class="fas fa-power-off me-2"></i>MATIKAN KIPAS
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm mt-4">
-            <div class="card-body">
-                <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>Status Sistem</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <h6>Status Koneksi</h6>
-                            <p class="mb-0"><span class="badge bg-success" id="connection-status">Terhubung</span></p>
-                        </div>
-                        <div class="mb-3">
-                            <h6>Pembaruan Terakhir</h6>
-                            <p class="mb-0" id="last-update">-</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 d-flex align-items-center">
-                        <div class="w-100 text-md-end">
-                            <a href="riwayat.html" class="btn btn-outline-primary" style="min-width: 200px;">
-                                <i class="fas fa-history me-2"></i>Lihat Riwayat
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <div class="toast-container position-fixed top-0 end-0 p-3">
-        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto" id="toast-title">Notifikasi</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body" id="toast-message">
-                Hello, world! This is a toast message.
-            </div>
-        </div>
-    </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="dashboard.js"></script>
     
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDKmLXcBbT7tp4sQVmxEXtpB7Q-3tNfgQg",
-            databaseURL: "https://iot-wuluh-default-rtdb.firebaseio.com/",
-        };
-
-        firebase.initializeApp(firebaseConfig);
+      // Highlight active link based on current page
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get current page filename
+        const currentPage = window.location.pathname.split('/').pop();
         
-        const database = firebase.database();
-        
-        const monitoringRef = database.ref('monitoring');
-        const relay_heaterRef = database.ref('relay_heater');
-        const relay_fanRef = database.ref('relay_fan');
-        const setpointRef = database.ref('set_point_temperature');
-        const alatRef = database.ref('alat');
-        
-        let monitoringData = {};
-        let relay_heater = {};
-        let relay_fan = {};
-        let set_point_temperature = 0;
-        let alatStatus = {};
-        
-        let lastUpdateTime = null;
-        
-        const toastElement = document.getElementById('notificationToast');
-        const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
-        
-        function showToast(title, message, isSuccess = true) {
-            document.getElementById('toast-title').textContent = title;
-            document.getElementById('toast-message').textContent = message;
-            
-            toastElement.classList.remove('bg-success', 'bg-danger', 'text-white');
-            if (isSuccess) {
-                toastElement.classList.add('bg-success', 'text-white');
-            } else {
-                toastElement.classList.add('bg-danger', 'text-white');
-            }
-            
-            toast.show();
-        }
-        
-        function formatTime(timestamp) {
-            if (!timestamp) return "-";
-            const date = new Date(timestamp);
-            return date.getHours().toString().padStart(2, '0') + ":" + 
-                   date.getMinutes().toString().padStart(2, '0');
-        }
-        
-        function formatDateTime(timestamp) {
-            if (!timestamp) return "-";
-            const date = new Date(timestamp);
-            return date.toLocaleString('id-ID');
-        }
-        
-        function updateMonitoringDisplay() {
-            if (monitoringData) {
-                if (monitoringData.suhu !== undefined) {
-                    document.getElementById('suhu').textContent = `${monitoringData.suhu.toFixed(1)} °C`;
-                    
-                    const suhuProgress = ((monitoringData.suhu - 20) / (30 - 20)) * 100;
-                    document.querySelector('.col-md-4:nth-child(1) .progress-bar').style.width = `${Math.min(Math.max(suhuProgress, 0), 100)}%`;
-                }
-                
-                if (monitoringData.kelembapan !== undefined) {
-                    document.getElementById('kelembapan').textContent = `${monitoringData.kelembapan.toFixed(1)} %`;
-                    
-                    const kelembapanProgress = ((monitoringData.kelembapan - 50) / (80 - 50)) * 100;
-                    document.querySelector('.col-md-4:nth-child(2) .progress-bar').style.width = `${Math.min(Math.max(kelembapanProgress, 0), 100)}%`;
-                }
-                
-                if (monitoringData.berat !== undefined) {
-                    document.getElementById('berat').textContent = `${monitoringData.berat.toFixed(1)} g`;
-                    
-                    const beratProgress = ((monitoringData.berat - 1000) / (2000 - 1000)) * 100;
-                    document.querySelector('.col-md-4:nth-child(3) .progress-bar').style.width = `${Math.min(Math.max(beratProgress, 0), 100)}%`;
-                }
-            }
-        }
-        
-        function updateRelayHeaterStatus() {
-            if (relay_heater) {
-                const statusElement = document.getElementById('heater-status');
-                const indicatorElement = document.getElementById('heater-indicator');
-                
-                if (relay_heater.status === "ON") {
-                    statusElement.textContent = "AKTIF";
-                    indicatorElement.classList.remove('status-off');
-                    indicatorElement.classList.add('status-on');
-                } else {
-                    statusElement.textContent = "NONAKTIF";
-                    indicatorElement.classList.remove('status-on');
-                    indicatorElement.classList.add('status-off');
-                }
-            }
-        }
-        
-        function updateRelayFanStatus() {
-            if (relay_fan) {
-                const statusElement = document.getElementById('fan-status');
-                const indicatorElement = document.getElementById('fan-indicator');
-                
-                if (relay_fan.status === "ON") {
-                    statusElement.textContent = "AKTIF";
-                    indicatorElement.classList.remove('status-off');
-                    indicatorElement.classList.add('status-on');
-                } else {
-                    statusElement.textContent = "NONAKTIF";
-                    indicatorElement.classList.remove('status-on');
-                    indicatorElement.classList.add('status-off');
-                }
-            }
-        }
-        
-        function updateDeviceStatus() {
-            if (alatStatus) {
-                const alertElement = document.getElementById('device-status-alert');
-                const badgeElement = document.getElementById('device-status-badge');
-                const textElement = document.getElementById('device-status-text');
-                const iconElement = document.getElementById('device-status-icon');
-                
-                if (alatStatus.status === "ON") {
-                    alertElement.className = "alert alert-success device-status-card mb-4";
-                    badgeElement.className = "badge bg-success fs-6 p-2";
-                    badgeElement.textContent = "TERHUBUNG";
-                    textElement.textContent = "Alat berhasil terhubung ke jaringan Wi-Fi";
-                    iconElement.className = "fas fa-microchip fa-2x me-3 text-success";
-                } else {
-                    alertElement.className = "alert alert-danger device-status-card mb-4";
-                    badgeElement.className = "badge bg-danger fs-6 p-2";
-                    badgeElement.textContent = "TERPUTUS";
-                    textElement.textContent = "Alat tidak terhubung ke jaringan Wi-Fi";
-                    iconElement.className = "fas fa-microchip fa-2x me-3 text-danger";
-                }
-            }
-        }
-        
-        function updateSetPointTemperature() {
-            if (set_point_temperature) {
-                document.getElementById('set-point-temp').value = set_point_temperature;
-            }
-        }
-        
-        function updateLastUpdate() {
-            lastUpdateTime = new Date();
-            document.getElementById('last-update').textContent = lastUpdateTime.toLocaleString('id-ID');
-        }
-        
-        function checkConnectionStatus() {
-            const connectedRef = database.ref(".info/connected");
-            connectedRef.on("value", (snap) => {
-                if (snap.val() === true) {
-                    document.getElementById('connection-status').className = "badge bg-success";
-                    document.getElementById('connection-status').textContent = "Terhubung";
-                } else {
-                    document.getElementById('connection-status').className = "badge bg-danger";
-                    document.getElementById('connection-status').textContent = "Terputus";
-                }
-            });
-        }
-        
-        function updateDateTime() {
-            const now = new Date();
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = now.toLocaleDateString('id-ID', dateOptions);
-            document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
-        }
-        
-        monitoringRef.on('value', (snapshot) => {
-            monitoringData = snapshot.val();
-            updateMonitoringDisplay();
-            updateLastUpdate();
+        // Find and set active link
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href === currentPage || (currentPage === '' && href === 'dashboard.html')) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
         });
-        
-        relay_heaterRef.on('value', (snapshot) => {
-            relay_heater = snapshot.val();
-            updateRelayHeaterStatus();
-            updateLastUpdate();
-        });
-        
-        relay_fanRef.on('value', (snapshot) => {
-            relay_fan = snapshot.val() || { status: "OFF" };
-            updateRelayFanStatus();
-            updateLastUpdate();
-        });
-        
-        setpointRef.on('value', (snapshot) => {
-            set_point_temperature = snapshot.val();
-            updateSetPointTemperature();
-            updateLastUpdate();
-        });
-
-        alatRef.on('value', (snapshot) => {
-            alatStatus = snapshot.val() || { status: "OFF" };
-            updateDeviceStatus();
-            updateLastUpdate();
-        });
-        
-        updateDateTime();
-        checkConnectionStatus();
-        setInterval(updateDateTime, 1000);
-        
-        document.getElementById('update-setpoint').addEventListener('click', function() {
-            const newSetPoint = parseFloat(document.getElementById('set-point-temp').value);
-            if (!isNaN(newSetPoint)) {
-                setpointRef.set(newSetPoint)
-                    .then(() => {
-                        showToast("Sukses", "Set point suhu berhasil diperbarui!", true);
-                    })
-                    .catch((error) => {
-                        showToast("Gagal", "Gagal memperbarui set point: " + error.message, false);
-                    });
-            } else {
-                showToast("Peringatan", "Masukkan nilai suhu yang valid!", false);
-            }
-        });
-        
-        document.getElementById('heater-on-btn').addEventListener('click', function() {
-            relay_heaterRef.update({ status: "ON" })
-                .then(() => {
-                    showToast("Sukses", "Pemanas berhasil dinyalakan!", true);
-                })
-                .catch((error) => {
-                    showToast("Gagal", "Gagal menyalakan pemanas: " + error.message, false);
-                });
-        });
-        
-        document.getElementById('heater-off-btn').addEventListener('click', function() {
-            relay_heaterRef.update({ status: "OFF" })
-                .then(() => {
-                    showToast("Sukses", "Pemanas berhasil dimatikan!", true);
-                })
-                .catch((error) => {
-                    showToast("Gagal", "Gagal mematikan pemanas: " + error.message, false);
-                });
-        });
-        
-        document.getElementById('fan-on-btn').addEventListener('click', function() {
-            relay_fanRef.update({ status: "ON" })
-                .then(() => {
-                    showToast("Sukses", "Kipas berhasil dinyalakan!", true);
-                })
-                .catch((error) => {
-                    showToast("Gagal", "Gagal menyalakan kipas: " + error.message, false);
-                });
-        });
-        
-        document.getElementById('fan-off-btn').addEventListener('click', function() {
-            relay_fanRef.update({ status: "OFF" })
-                .then(() => {
-                    showToast("Sukses", "Kipas berhasil dimatikan!", true);
-                })
-                .catch((error) => {
-                    showToast("Gagal", "Gagal mematikan kipas: " + error.message, false);
-                });
-        });
+      });
     </script>
-</body>
+  </body>
 </html>
